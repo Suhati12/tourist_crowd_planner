@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourist Crowd Level Planner - Sightseeing & Visit Optimizer</title>
+    
+    <!-- Meta tags for SEO & OpenGraph -->
+    <meta name="description" content="Plan your sightseeing around expected crowd levels. Analyze historical tourist data, calculate crowd scores, visualize peak periods, and optimize visit times.">
+    <meta name="keywords" content="Tourist Crowd Planner, Tourism Dashboard, Taj Mahal Crowd, Golden Temple Crowd, Sightseeing Optimizer, India Tourism">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Chart.js 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Glassmorphism Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Header Navigation Bar -->
+    <header class="navbar">
+        <a href="#" class="brand" onclick="location.reload()">
+            <div class="brand-icon">
+                <i class="fas fa-compass"></i>
+            </div>
+            <div class="brand-text">
+                <h1>Tourist Crowd Planner</h1>
+                <span>Sightseeing Optimizer</span>
+            </div>
+        </a>
+
+        <ul class="nav-links">
+            <li><a class="nav-link active" data-view="home"><i class="fas fa-chart-pie"></i> Home / Dashboard</a></li>
+            <li><a class="nav-link" data-view="planner"><i class="fas fa-calendar-alt"></i> Crowd Planner</a></li>
+            <li><a class="nav-link" data-view="attractions"><i class="fas fa-monument"></i> Attractions</a></li>
+            <li><a class="nav-link" data-view="historical"><i class="fas fa-database"></i> Historical Trends</a></li>
+            <li><a class="nav-link" data-view="about"><i class="fas fa-info-circle"></i> About</a></li>
+        </ul>
+
+        <div class="nav-badge">
+            <span class="live-dot"></span>
+            <span>Historical Data Engine Active</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: HOME / DASHBOARD                   -->
+        <!-- ========================================== -->
+        <section id="view-home" class="view-section active">
+
+            <!-- Hero Section -->
+            <div class="hero-card">
+                <div class="hero-title-group">
+                    <span class="hero-subtitle-tag"><i class="fas fa-magic"></i> Smart Sightseeing Analytics</span>
+                    <h2 class="hero-title">Plan your sightseeing around expected crowd levels.</h2>
+                    <p class="hero-description">
+                        Beat the queues! Select a tourist destination and date to analyze historical visitor trends, calculate crowd scores, and uncover the ideal golden-hour visiting time.
+                    </p>
+                </div>
+
+                <!-- Interactive Search & Date Selection Widget -->
+                <div class="planner-form-card">
+                    <form id="planner-form" class="planner-form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="planner-attraction">
+                                <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Select Tourist Attraction
+                            </label>
+                            <select id="planner-attraction" class="form-control" required>
+                                <option value="Taj Mahal">Taj Mahal (Agra)</option>
+                                <option value="Golden Temple">Golden Temple (Amritsar)</option>
+                                <option value="India Gate">India Gate (New Delhi)</option>
+                                <option value="Red Fort">Red Fort (Old Delhi)</option>
+                                <option value="Qutub Minar">Qutub Minar (New Delhi)</option>
+                                <option value="Jaipur City Palace">Jaipur City Palace (Jaipur)</option>
+                                <option value="Manali Mall Road">Manali Mall Road (Manali)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="planner-date">
+                                <i class="fas fa-calendar" style="color: var(--secondary);"></i> Select Date
+                            </label>
+                            <input type="date" id="planner-date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="planner-time">
+                                <i class="fas fa-clock" style="color: var(--color-mod);"></i> Planned Time
+                            </label>
+                            <select id="planner-time" class="form-control">
+                                <option value="07:00">07:00 AM (Early Morning)</option>
+                                <option value="10:00" selected>10:00 AM (Morning)</option>
+                                <option value="13:00">01:00 PM (Midday)</option>
+                                <option value="16:00">04:00 PM (Afternoon)</option>
+                                <option value="19:00">07:00 PM (Evening)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-search"></i> Predict Crowd Level
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dashboard Metric Cards Grid -->
+            <div class="dashboard-cards-grid">
+                <!-- Card 1: Selected Attraction -->
+                <div class="summary-card">
+                    <div class="card-header-sm">
+                        <span class="card-title-sm">Selected Attraction</span>
+                        <div class="card-icon-badge" style="background: rgba(99, 102, 241, 0.15); color: var(--primary);">
+                            <i class="fas fa-landmark"></i>
+                        </div>
+                    </div>
+                    <div class="card-main-val" id="card-attr-name">Taj Mahal</div>
+                    <div class="card-subtext" id="card-attr-sub">Agra, Uttar Pradesh</div>
+                </div>
+
+                <!-- Card 2: Expected Crowd Level -->
+                <div class="summary-card">
+                    <div class="card-header-sm">
+                        <span class="card-title-sm">Expected Crowd Level</span>
+                        <div class="card-icon-badge" style="background: rgba(6, 182, 212, 0.15); color: var(--secondary);">
+                            <i class="fas fa-users-slash"></i>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.4rem;">
+                        <span id="card-crowd-badge" class="crowd-badge High">
+                            <i class="fas fa-users"></i> High
+                        </span>
+                    </div>
+                    <div class="card-subtext" style="margin-top: 0.6rem;" id="card-condition-text">
+                        Busy and congested. Expect longer lines.
+                    </div>
+                </div>
+
+                <!-- Card 3: Crowd Score (0-100) -->
+                <div class="summary-card">
+                    <div class="card-header-sm">
+                        <span class="card-title-sm">Crowd Score</span>
+                        <div class="card-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--color-mod);">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                    </div>
+                    <div class="score-radial-wrapper">
+                        <div id="card-score-circle" class="score-radial-circle">
+                            <span id="card-score-val">74</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.1rem; font-weight: 700;">Score / 100</div>
+                            <div class="card-subtext">Estimated Historical Index</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Recommended Visiting Time -->
+                <div class="summary-card">
+                    <div class="card-header-sm">
+                        <span class="card-title-sm">Recommended Time</span>
+                        <div class="card-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--color-low);">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="card-main-val" style="color: var(--color-low); font-size: 1.35rem;" id="card-best-time">
+                        06:00 AM – 08:30 AM
+                    </div>
+                    <div class="card-subtext"><i class="fas fa-sun" style="color:#f59e0b;"></i> Early morning golden window</div>
+                </div>
+
+                <!-- Card 5: Peak Hours & Wait Time -->
+                <div class="summary-card">
+                    <div class="card-header-sm">
+                        <span class="card-title-sm">Peak Hours to Avoid</span>
+                        <div class="card-icon-badge" style="background: rgba(239, 68, 68, 0.15); color: var(--color-high);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="card-main-val" style="color: var(--color-high); font-size: 1.35rem;" id="card-peak-hours">
+                        11:00 AM – 03:30 PM
+                    </div>
+                    <div class="card-subtext">Est. Wait: <strong id="card-wait-time" style="color:#fff;">35–65 mins</strong></div>
+                </div>
+            </div>
+
+            <!-- Recommendation Summary Banner -->
+            <div class="recommendation-banner">
+                <div>
+                    <h3 class="rec-title" id="banner-rec-title">
+                        <i class="fas fa-lightbulb"></i> Recommended Window: 06:00 AM – 08:30 AM
+                    </h3>
+                    <p class="rec-text" id="banner-rec-desc">
+                        Based on historical tourist trends for Taj Mahal, visiting during early morning sunrise hours ensures significantly reduced crowd density (score < 30) and shorter ticketing queues.
+                    </p>
+                </div>
+                <div>
+                    <button class="btn-primary" onclick="window.print()">
+                        <i class="fas fa-download"></i> Save Itinerary
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Crowd Visualizations Section -->
+            <div class="section-title-group">
+                <div>
+                    <h3 class="section-title"><i class="fas fa-chart-line" style="color: var(--primary);"></i> Crowd Level Visualizations</h3>
+                    <p class="section-desc">Interactive historical analysis by hour, day of week, and monthly seasonal trends</p>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <!-- Chart 1: Hourly Curve -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title"><i class="fas fa-clock" style="color: var(--primary);"></i> Hourly Crowd Score Curve (24h)</h4>
+                        <span style="font-size: 0.8rem; color: var(--text-subtle);">Low score = Quietest time</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4: Category Distribution -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title"><i class="fas fa-chart-pie" style="color: var(--secondary);"></i> Crowd Score Categories</h4>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Daily Trends -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title"><i class="fas fa-calendar-day" style="color: var(--color-mod);"></i> Crowd Level by Day of Week</h4>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="dailyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Monthly Trends -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4 class="chart-title"><i class="fas fa-calendar-alt" style="color: var(--color-low);"></i> Monthly Visitor Trends</h4>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: CROWD PLANNER & COMPARISON         -->
+        <!-- ========================================== -->
+        <section id="view-planner" class="view-section">
+            <div class="hero-card" style="margin-bottom: 2rem;">
+                <span class="hero-subtitle-tag"><i class="fas fa-balance-scale"></i> Destination Comparison Tool</span>
+                <h2 class="hero-title">Compare Tourist Attractions Side-by-Side</h2>
+                <p class="hero-description">
+                    Unsure which destination to visit first? Select two attractions to compare their expected crowd scores, peak hours, and golden visiting windows on your chosen date.
+                </p>
+
+                <div class="planner-form-card" style="margin-top: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-monument"></i> First Attraction</label>
+                            <select id="comp-attr-1" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><i class="fas fa-landmark"></i> Second Attraction</label>
+                            <select id="comp-attr-2" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn-primary" onclick="compareAttractions()">
+                                <i class="fas fa-columns"></i> Compare Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Results Container -->
+            <div id="comparison-results">
+                <div class="summary-card" style="text-align: center; padding: 3rem;">
+                    <i class="fas fa-exchange-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h3>Select two attractions above to generate side-by-side crowd analysis.</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: ATTRACTIONS SHOWCASE               -->
+        <!-- ========================================== -->
+        <section id="view-attractions" class="view-section">
+            <div class="section-title-group" style="margin-bottom: 2rem;">
+                <div>
+                    <h2 class="section-title"><i class="fas fa-monument" style="color: var(--primary);"></i> Featured Tourist Attractions</h2>
+                    <p class="section-desc">Browse baseline crowd scores, operating hours, ticket info, and peak hours for top Indian landmarks.</p>
+                </div>
+            </div>
+
+            <div class="attraction-cards-grid" id="attractions-grid">
+                <!-- Dynamically populated via app.js -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: HISTORICAL TRENDS & DATA           -->
+        <!-- ========================================== -->
+        <section id="view-historical" class="view-section">
+            <div class="section-title-group" style="margin-bottom: 1.5rem;">
+                <div>
+                    <h2 class="section-title"><i class="fas fa-database" style="color: var(--secondary);"></i> Historical Crowd Dataset Explorer</h2>
+                    <p class="section-desc">Explore sample historical records stored in local SQLite database used to compute crowd scores.</p>
+                </div>
+                <button class="btn-primary" onclick="openAddRecordModal()">
+                    <i class="fas fa-plus-circle"></i> Add Sample Record
+                </button>
+            </div>
+
+            <!-- Key Dataset KPIs -->
+            <div class="dashboard-cards-grid" style="margin-bottom: 1.5rem;">
+                <div class="summary-card">
+                    <span class="card-title-sm">Total Historical Logs</span>
+                    <div class="card-main-val" id="stat-total-records">0</div>
+                    <div class="card-subtext">Pre-populated SQLite database</div>
+                </div>
+                <div class="summary-card">
+                    <span class="card-title-sm">Average Crowd Score</span>
+                    <div class="card-main-val" id="stat-avg-score" style="color: var(--color-mod);">0/100</div>
+                    <div class="card-subtext">Across all destinations</div>
+                </div>
+                <div class="summary-card">
+                    <span class="card-title-sm">Busiest Attraction</span>
+                    <div class="card-main-val" id="stat-busiest" style="color: var(--color-high); font-size: 1.25rem;">Taj Mahal</div>
+                    <div class="card-subtext">Highest average rush index</div>
+                </div>
+                <div class="summary-card">
+                    <span class="card-title-sm">Quietest Spot</span>
+                    <div class="card-main-val" id="stat-quietest" style="color: var(--color-low); font-size: 1.25rem;">Qutub Minar</div>
+                    <div class="card-subtext">Lowest overall congestion</div>
+                </div>
+            </div>
+
+            <!-- Filterable Table -->
+            <div class="table-card">
+                <div class="table-filter-bar">
+                    <div class="form-group">
+                        <input type="text" id="hist-search" class="form-control" placeholder="Search attraction, day or time...">
+                    </div>
+                    <div class="form-group">
+                        <select id="hist-filter-attr" class="form-control">
+                            <option value="All">All Attractions</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select id="hist-filter-month" class="form-control">
+                            <option value="All">All Months</option>
+                            <option value="Jan">January</option>
+                            <option value="Feb">February</option>
+                            <option value="Mar">March</option>
+                            <option value="Apr">April</option>
+                            <option value="May">May</option>
+                            <option value="Jun">June</option>
+                            <option value="Jul">July</option>
+                            <option value="Aug">August</option>
+                            <option value="Sep">September</option>
+                            <option value="Oct">October</option>
+                            <option value="Nov">November</option>
+                            <option value="Dec">December</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select id="hist-filter-cat" class="form-control">
+                            <option value="All">All Categories</option>
+                            <option value="Low">Low (0–30)</option>
+                            <option value="Moderate">Moderate (31–60)</option>
+                            <option value="High">High (61–80)</option>
+                            <option value="Very High">Very High (81–100)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn-secondary" onclick="loadHistoricalTable(1)">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                    </div>
+                </div>
+
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Attraction</th>
+                                <th>Date</th>
+                                <th>Month</th>
+                                <th>Day</th>
+                                <th>Time</th>
+                                <th>Visitor Count</th>
+                                <th>Crowd Score</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hist-table-body">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-bar">
+                    <span id="page-info">Showing Page 1</span>
+                    <div class="page-controls">
+                        <button id="btn-prev" class="page-btn"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <button id="btn-next" class="page-btn">Next <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 5: ABOUT PAGE                         -->
+        <!-- ========================================== -->
+        <section id="view-about" class="view-section">
+            <div class="hero-card" style="margin-bottom: 2rem;">
+                <span class="hero-subtitle-tag"><i class="fas fa-graduation-cap"></i> Academic & Technical Overview</span>
+                <h2 class="hero-title">About Tourist Crowd Level Planner</h2>
+                <p class="hero-description">
+                    This project demonstrates how historical tourism analytics can be transformed into actionable visit optimization algorithms for tourists, reducing wait times and improving sightseeing experiences.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="chart-card">
+                    <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; color: var(--primary);">
+                        <i class="fas fa-cogs"></i> Predictive Algorithm Logic
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+                        The backend calculation engine evaluates four key predictive multipliers:
+                    </p>
+                    <ul style="list-style: none; color: var(--text-muted); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <li><i class="fas fa-check-circle" style="color: var(--color-low);"></i> <strong>Base Attraction Weight:</strong> Inherent popularity score of the monument.</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--color-low);"></i> <strong>Day of Week Factor:</strong> Weekend surges (Saturday +30%, Sunday +35%).</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--color-low);"></i> <strong>Seasonality Factor:</strong> High season (Oct–Mar for heritage monuments, May–Jun for hill stations).</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--color-low);"></i> <strong>Hourly Curve:</strong> Midday peak congestion vs early morning golden hours.</li>
+                    </ul>
+                </div>
+
+                <div class="chart-card">
+                    <h3 style="font-family: var(--font-heading); margin-bottom: 1rem; color: var(--secondary);">
+                        <i class="fas fa-code-branch"></i> Technology Architecture
+                    </h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                        <div style="background: rgba(255,255,255,0.04); padding: 1rem; border-radius: 10px;">
+                            <strong style="color: #fff;">Backend Stack:</strong><br>
+                            Python 3.13<br>
+                            Flask REST Framework<br>
+                            SQLite3 Database Engine
+                        </div>
+                        <div style="background: rgba(255,255,255,0.04); padding: 1rem; border-radius: 10px;">
+                            <strong style="color: #fff;">Frontend Stack:</strong><br>
+                            HTML5 & CSS3 Glassmorphism<br>
+                            Vanilla JS (ES6+)<br>
+                            Chart.js Visualizations
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Adding Sample Historical Record -->
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Add Sample Historical Log</h3>
+                <button class="modal-close" onclick="closeAddRecordModal()">&times;</button>
+            </div>
+            <form onsubmit="handleAddRecordSubmit(event)">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Select Attraction</label>
+                    <select id="modal-attraction" class="form-control" required></select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Date</label>
+                    <input type="date" id="modal-date" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Time Slot</label>
+                    <select id="modal-time" class="form-control" required>
+                        <option value="08:00">08:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="14:00">02:00 PM</option>
+                        <option value="17:00">05:00 PM</option>
+                        <option value="20:00">08:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label">Recorded Visitor Count</label>
+                    <input type="number" id="modal-visitors" class="form-control" value="1250" min="50" max="50000" required>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn-secondary" onclick="closeAddRecordModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Insert Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 <strong>Tourist Crowd Level Planner</strong>. Built for college project demonstration.</p>
+    </footer>
+
+    <!-- Application JavaScripts -->
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
