@@ -1,4 +1,4 @@
-# 🧭 Tourist Crowd Level Planner
+#  Tourist Crowd Level Planner
 
 > **"Plan your sightseeing around expected crowd levels."**
 
@@ -6,7 +6,7 @@ A modern, full-stack web application designed to help tourists beat the queues a
 
 ---
 
-## 🌟 Key Features
+##  Key Features
 
 1. **Interactive Dashboard & Search**: Select popular tourist attractions (*Taj Mahal, Golden Temple, India Gate, Red Fort, Qutub Minar, Jaipur City Palace, Manali Mall Road*), pick a date and planned visit time.
 2. **Predictive Crowd Scoring Engine**:
